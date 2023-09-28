@@ -4,4 +4,4 @@ Backand для сервиса, в котором можно найти филь�
 `npm run dev` — запускает сервер с hot-reload
 
 ## Ссылки на проект
-[Backand](polezhaevr.bitfilmsdb.nomoredomainsrocks.ru)
+[Backand](https://polezhaevr.bitfilmsdb.nomoredomainsrocks.ru/)

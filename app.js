@@ -1,11 +1,10 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const rateLimit = require('express-rate-limit');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const { errors } = require('celebrate');
 const { craeteUser, login } = require('./controllers/users');
-
+const limiter = require('./middlewares/limiter');
 const { PORT = 3000 } = process.env;
 const app = express();
 const auth = require('./middlewares/auth');
@@ -43,12 +42,7 @@ app.use((req, res, next) => {
   return next();
 });
 
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 100,
-  standardHeaders: true,
-  legacyHeaders: false,
-});
+app.use(limiter);
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -67,17 +61,16 @@ mongoose
 app.use(helmet());
 app.use(express.json());
 app.use(requestLogger);
-
+app.use(limiter);
 app.post('/signup', validateCreateUser, craeteUser);
 app.post('/signin', validateLogin, login);
 app.use(auth);
 app.use('/', require('./routes/users'));
 app.use('/', require('./routes/movies'));
 
-app.use(errorLogger);
-app.use(limiter);
-
 app.use('*', (req, res, next) => next(new NotFound('Такая страница не существует.')));
+app.use(errorLogger);
+
 app.use(errors());
 app.use(errorHandler);
 app.listen(PORT, () => {

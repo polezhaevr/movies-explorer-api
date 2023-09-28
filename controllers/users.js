@@ -36,6 +36,10 @@ module.exports.updateProfile = (req, res, next) => {
         next(new BadRequest('Переданы некорректные данные при обновлении профиля.'));
         return;
       }
+      if (err.code === 11000) {
+        next(new Conflict('Пользователь с таким email уже зарегистрирован.'));
+        return;
+      }
       next(err);
     });
 };

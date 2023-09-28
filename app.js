@@ -18,6 +18,9 @@ const allowedCors = [
   'http://localhost:3000',
   'http://localhost:3001',
   'http://127.0.0.1:3000',
+  'http://polezhaevr.front.movies.nomoredomainsrocks.ru',
+  'https://polezhaevr.front.movies.nomoredomainsrocks.ru',
+
 ];
 
 app.use((req, res, next) => {

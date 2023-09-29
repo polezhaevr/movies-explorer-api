@@ -64,7 +64,8 @@ module.exports.getDeleteMovieById = (req, res, next) => {
 };
 
 module.exports.getMovies = (req, res, next) => {
-  Movie.find({})
+  Movie.find({ owner: { _id: req.user._id } })
+    .populate('owner')
     .then((movie) => {
       res.status(200).send(movie);
     })

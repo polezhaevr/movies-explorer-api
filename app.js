@@ -5,13 +5,27 @@ const helmet = require('helmet');
 const { errors } = require('celebrate');
 const { craeteUser, login } = require('./controllers/users');
 const limiter = require('./middlewares/limiter');
-const { PORT = 3000 } = process.env;
+
+const { DATABASE_URL } = require('./utils/constants');
+const { PORT } = require('./utils/constants');
+
 const app = express();
 const auth = require('./middlewares/auth');
 const { validateLogin, validateCreateUser } = require('./middlewares/validation');
 const NotFound = require('./errors/NotFound');
 const errorHandler = require('./middlewares/error-handler');
 const { requestLogger, errorLogger } = require('./middlewares/logger');
+
+console.log(PORT);
+
+mongoose
+  .set('strictQuery', false)
+  .connect(DATABASE_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('Connected to MongoDB'))
+  .catch((error) => console.log(error));
 
 const allowedCors = [
   'http://localhost:3000',
@@ -48,15 +62,6 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // подключаемся к серверу mongo
-mongoose
-  .set('strictQuery', false)
-  .connect('mongodb://127.0.0.1:27017/bitfilmsdb', {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-
-  })
-  .then(() => console.log('Connected to MongoDB'))
-  .catch((error) => console.log(error));
 
 app.use(helmet());
 app.use(express.json());
